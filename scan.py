@@ -41,15 +41,15 @@ def main(arg=None):
     input = "input.txt"
     result = readYalexFile(input)
 
-    DFAMin = {}
-    with open("DFAMin.pickle", "rb") as f:
-        DFAMin = pickle.load(f)
+    MinDFA = {}
+    with open("MinDFA.pickle", "rb") as f:
+        MinDFA = pickle.load(f)
 
     grammar = getGrammar()
         
     start_time = time.time()
 
-    tokens = readString(result, DFAMin, grammar)
+    tokens = readString(result, MinDFA, grammar)
 
     grammar["tokens"] = tokens
 
@@ -60,12 +60,14 @@ def main(arg=None):
 
     time_taken = end_time - start_time
 
-    print(f"\nScan.py executed in {round(time_taken, 3)}s")
+    print("\n==========================================================================")    
+    print(f"Scan.py executed in {round(time_taken, 3)}s")
+    print("==========================================================================\n")
 
     pass
 
 
-def readString(data, DFAMin, grammar):
+def readString(data, MinDFA, grammar):
     i = 0
     counter = 0
     tokens = []
@@ -74,15 +76,15 @@ def readString(data, DFAMin, grammar):
 
     while i < lengthData:
         print("\ni: " + str(i))
-        num, values, temp, error = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["returns"], data, i)
+        num, values, temp, error = simSCAN.exec(MinDFA["transitions"], MinDFA["start_states"], MinDFA["returns"], data, i)
         if error:
             print(f"Value unrecognized: '{temp}'")
             i += 1
             print("m: " + str(i))
             continue
         token = ""
-        for key in DFAMin["new_returns"]:
-            if values in DFAMin["new_returns"][key]:
+        for key in MinDFA["new_returns"]:
+            if values in MinDFA["new_returns"][key]:
                 token = key
                 break
         if grammar["ignores"] != []:        

@@ -136,7 +136,9 @@ def main(arg=None):
 
     time_taken = end_time - start_time
 
-    print(f"\\nScan.py executed in {round(time_taken, 3)}s")
+    print("\\n==========================================================================")    
+    print(f"Scan.py executed in {round(time_taken, 3)}s")
+    print("==========================================================================\\n")
 
     pass
 
