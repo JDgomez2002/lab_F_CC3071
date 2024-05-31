@@ -76,7 +76,7 @@ def main(myFile):
     print("Tokens: ", end=" ")
     for token in tokens:
         print(token, end=" ")
-    print("==========================================================================")
+    print("\n==========================================================================")
     print("\n")
     for dic in tokens_dictionary:
         print(dic, ": ", tokens_dictionary[dic])
@@ -117,15 +117,15 @@ def main(arg=None):
     input = "input.txt"
     result = readYalexFile(input)
 
-    DFAMin = {}
-    with open("DFAMin.pickle", "rb") as f:
-        DFAMin = pickle.load(f)
+    MinDFA = {}
+    with open("MinDFA.pickle", "rb") as f:
+        MinDFA = pickle.load(f)
 
     grammar = getGrammar()
         
     start_time = time.time()
 
-    tokens = readString(result, DFAMin, grammar)
+    tokens = readString(result, MinDFA, grammar)
 
     grammar["tokens"] = tokens
 
@@ -141,7 +141,7 @@ def main(arg=None):
     pass
 
 
-def readString(data, DFAMin, grammar):
+def readString(data, MinDFA, grammar):
     i = 0
     counter = 0
     tokens = []
@@ -150,15 +150,15 @@ def readString(data, DFAMin, grammar):
 
     while i < lengthData:
         print("\\ni: " + str(i))
-        num, values, temp, error = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["returns"], data, i)
+        num, values, temp, error = simSCAN.exec(MinDFA["transitions"], MinDFA["start_states"], MinDFA["returns"], data, i)
         if error:
             print(f"Value unrecognized: '{temp}'")
             i += 1
             print("m: " + str(i))
             continue
         token = ""
-        for key in DFAMin["new_returns"]:
-            if values in DFAMin["new_returns"][key]:
+        for key in MinDFA["new_returns"]:
+            if values in MinDFA["new_returns"][key]:
                 token = key
                 break
         if grammar["ignores"] != []:        
@@ -263,7 +263,7 @@ if __name__ == "__main__":
         else:
             tokens_dictionary.pop(ret)
 
-    DFAMin = {
+    MinDFA = {
         "states": new_states,
         "transitions": new_transitions,
         "symbols": symbols,
@@ -274,8 +274,8 @@ if __name__ == "__main__":
         "tokens": toekns
     }
 
-    with open('DFAMin.pickle', 'wb') as f:
-        pickle.dump(DFAMin, f)
+    with open('MinDFA.pickle', 'wb') as f:
+        pickle.dump(MinDFA, f)
 
     # print("\nMin DFA saved in MinDFA.pickle\n")
 
@@ -442,7 +442,7 @@ def readYalexFile(Machines, file):
         if header_bool == False:
             bol, num, simulationValues = simAFD.exec(headers_transitions, headers_inicial, headers_final, data, i)
             if bol and header_bool == False:
-                print("Header: '" + simulationValues +"'")
+                # print("Header: '" + simulationValues +"'")
                 dictionary['Header'] = simulationValues
                 counter += 1
                 i = num
@@ -455,7 +455,7 @@ def readYalexFile(Machines, file):
 
         bol, num, simulationValues = simAFD.exec(rules_transitions, rules_inicial, rules_final, data, i)
         if bol:
-            print("Rules: " + simulationValues)
+            # print("Rules: " + simulationValues)
             dictionary[counter] = simulationValues
             counter += 1
             read_tokens = True
@@ -470,7 +470,7 @@ def readYalexFile(Machines, file):
         if read_tokens == False:
             bol, num, simulationValues = simAFD.exec(declaration_transitions, declaration_inicial, declaration_final, data, i)
             if bol:
-                print("Declaration: " + simulationValues)
+                # print("Declaration: " + simulationValues)
                 dictionary[counter] = simulationValues
                 listValues = simulationValues.split()
                 variables.append(listValues[1])
@@ -480,7 +480,7 @@ def readYalexFile(Machines, file):
 
             bol, num, simulationValues = simAFD.exec(variables_transitions, variables_inicial, variables_final, data, i)
             if bol:
-                print("Variables: " + simulationValues)
+                # print("Variables: " + simulationValues)
                 dictionary[counter] = simulationValues
                 if variables != [] and len(variables) < 2:
                     values[variables.pop()] = simulationValues
@@ -496,7 +496,7 @@ def readYalexFile(Machines, file):
         
         bol, num, simulationValues = simAFD.exec(trailer_transitions, trailer_inicial, trailer_final, data, i)
         if bol:
-            print("Trailer: '" + simulationValues + "'")
+            # print("Trailer: '" + simulationValues + "'")
             dictionary['Trailer'] = simulationValues
             counter += 1
             i = num
@@ -511,7 +511,7 @@ def readYalexFile(Machines, file):
 
             bol, num, simulationValues = simAFD.exec(tokens2_transitions, tokens2_inicial, tokens2_final, data, i)
             if bol:
-                print("Token: " + simulationValues)
+                # print("Token: " + simulationValues)
                 dictionary[counter] = simulationValues
                 listValues = simulationValues.split()
 
@@ -521,7 +521,7 @@ def readYalexFile(Machines, file):
                     newToken = 'Token'+str(numToken)
                     values[newToken] = listValues[1]
                     numToken += 1
-                print("ListValues: ", listValues)
+                # print("ListValues: ", listValues)
                 if tokens == []:
                     tokens.append(newToken)
                 else:
@@ -534,7 +534,7 @@ def readYalexFile(Machines, file):
                 while True:
                     bol, num, simulationValues = simAFD.exec(returns_transitions, returns_inicial, returns_final, data, i)
                     if bol:
-                        print("Return: " + simulationValues)
+                        # print("Return: " + simulationValues)
                         dictionary[counter] = simulationValues
                         if temp_tokens != []:
                             tokens_dictionary[temp_tokens.pop()] = simulationValues
