@@ -1,21 +1,21 @@
 %token ws
 %token id
-%token plus
-%token lparen rparen
-%token times
+%token Token1
+%token Token2
+%token Token3 Token4
 IGNORE ws
 
 %%
 
 expression:
-    expression plus term
+    expression Token1 term
   | term
 ;
 term:
-    term times factor
+    term Token2 factor
   | factor
 ;
 factor:
-    lparen expression rparen
+    Token3 expression Token4
   | id
 ;
